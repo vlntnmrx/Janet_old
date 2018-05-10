@@ -1,2 +1,3 @@
 # Janet
 A basic neural network written in Java
+Actually, I'm pretty new to Java, so this is more of a test. Comments are mostly in German and the nameing of the methods is horrible. So, yeah, that's about it...
