@@ -1,0 +1,93 @@
+
+//Der alte Lernalghorithmus:
+
+void learn(network netz, double[] exp) {
+        double delta, d2, d3;
+        for (int i = 0; i < weights.length; i++) {
+            delta = 1;
+            //Befinden wir uns im AusgabeLayer?
+            //Dann muss nur ein Teil der Fehlerfunktion berücksichtigt werden
+            if (this.layerId == netz.lays.length - 1) {
+                delta = (netz.lr * (exp[this.id] - this.value)) * sigdiff(this.value) * netz.lays[netz.lays.length - 2].net[i].value;
+            }
+            //Befinden wir uns im vorletzten Layer?
+            //Dann muss von jedem Teil nur das Element berücksichtigt werden, das auf das Ziel zeigt
+            if (this.layerId == netz.lays.length - 2) {
+                delta = 0;
+                for (int u = 0; u < netz.lays[netz.lays.length - 1].net.length; u++) {
+                    d2 = netz.lr * (exp[u] - netz.lays[netz.lays.length - 1].net[u].value) * (netz.lays[netz.lays.length - 1].net[u].weights[this.id] * sigdiff(this.value) * netz.lays[netz.lays.length - 3].net[i].value);
+                    delta = delta + d2;
+                }
+            }
+            //Befinden wir uns im dritten Layer?
+            if (this.layerId < netz.lays.length - 2) {
+                delta = 0;
+                for (int u = 0; u < netz.lays[netz.lays.length - 1].net.length; u++) {
+                    d2 = netz.lr * (exp[u] - this.value) * sigdiff(this.value);
+                    d3 = 0;
+                    for (int o = 0; o < netz.lays[netz.lays.length - 2].net.length; o++) {
+                        d3 += netz.lays[netz.lays.length - 1].net[u].weights[o] * sigdiff(netz.lays[netz.lays.length - 2].net[o].value) * netz.lays[netz.lays.length - 2].net[o].weights[this.id] * sigdiff(this.value) * netz.lays[this.layerId - 1].net[i].value;
+                    }
+                    delta += d2 * d3;
+                }
+            }
+            weights[i] -= delta;
+        }
+
+        //Bias anpassen?!
+        delta = 1;
+        //Befinden wir uns im AusgabeLayer?
+        //Dann muss nur ein Teil der Fehlerfunktion berücksichtigt werden
+        if (this.layerId == netz.lays.length - 1) {
+            delta = (netz.lr * (exp[this.id] - this.value)) * sigdiff(this.value);
+        }
+        //Befinden wir uns im vorletzten Layer?
+        //Dann muss von jedem Teil nur das Element berücksichtigt werden, das auf das Ziel zeigt
+        if (this.layerId == netz.lays.length - 2) {
+            delta = 0;
+            for (int u = 0; u < netz.lays[netz.lays.length - 1].net.length; u++) {
+                d2 = netz.lr * (exp[u] - netz.lays[netz.lays.length - 1].net[u].value) * (netz.lays[netz.lays.length - 1].net[u].weights[this.id] * sigdiff(this.value));
+                delta = delta + d2;
+            }
+        }
+        //Befinden wir uns im dritten Layer?
+        if (this.layerId < netz.lays.length - 2) {
+            delta = 0;
+            for (int u = 0; u < netz.lays[netz.lays.length - 1].net.length; u++) {
+                d2 = netz.lr * (exp[u] - this.value) * sigdiff(this.value);
+                d3 = 0;
+                for (int o = 0; o < netz.lays[netz.lays.length - 2].net.length; o++) {
+                    d3 += netz.lays[netz.lays.length - 1].net[u].weights[o] * sigdiff(netz.lays[netz.lays.length - 2].net[o].value) * netz.lays[netz.lays.length - 2].net[o].weights[this.id] * sigdiff(this.value);
+                }
+                delta += d2 * d3;
+            }
+        }
+        bias -= delta;
+    }
+
+
+//Auch in network.java zu finden, aber aus der main() funktion übernommen
+
+double[] exp = new double[10];
+        int lab;
+        int right = 0, wrong = 0;
+        double fehler;
+        for (int i = 0; i < CYCLES; i++) {
+            lab = daten.readLabel();
+            Arrays.fill(exp, 0);
+            exp[lab] = 1.0;
+            netz.prep(daten);
+            netz.learn(exp);
+            fehler = 0;
+            for (int j = 0; j < netz.lays[3].net.length; j++) {
+                fehler += Math.pow(exp[j] - netz.lays[3].net[j].value, 2);
+            }
+            //System.out.println(i + ": Erwartet: " + lab + " Ergebnis: " + (netz.lays[3].getBiggest()).id + " mit Wert " + (netz.lays[3].getBiggest()).value);
+            if (lab == (netz.lays[3].getBiggest()).id) {
+                System.out.println(i + " - -----CORRECT-----\t\t F:" + fehler);
+                right++;
+            } else {
+                wrong++;
+                System.out.println(i + " - " + (double) right / (double) wrong + " \t F:" + fehler);
+            }
+        }
