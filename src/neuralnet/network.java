@@ -135,6 +135,13 @@ public class network {
         }
     }
 
+    /**
+     * Load weights from file
+     *
+     * @param dat
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
     void restoreFile(File dat) throws FileNotFoundException, IOException {
         DataInputStream inp = new DataInputStream(new FileInputStream(dat));
         System.out.println("Read Config from File...");
@@ -177,6 +184,13 @@ public class network {
         inp.close();
     }
 
+    /**
+     * Test with @param testDaten and get accuaracie
+     *
+     * @param testDaten
+     * @param cycles
+     * @throws IOException
+     */
     void test(imgLoader testDaten, int cycles) throws IOException {
         double[] exp = new double[10];
         int lab;
@@ -200,7 +214,7 @@ public class network {
                 System.out.println(i + " - " + (double) right / (double) wrong + " \t F:" + fehler);
             }
         }
-        System.out.println("Treffsicherheit: " + ((double)right / (double)(right + wrong)) * 100.0 + "%");
+        System.out.println("Treffsicherheit: " + ((double) right / (double) (right + wrong)) * 100.0 + "%");
     }
 
     void dumbFile(String name) throws IOException {
