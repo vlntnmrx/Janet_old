@@ -27,7 +27,7 @@ public class network {
      */
     layer[] lays;
     int anzLays;
-    double lr = 2.0;//Learning Rate, mutliplikator für die Ableitung
+    public double lr = 2.0;//Learning Rate, mutliplikator für die Ableitung (2.0 ist gut)
 
     /**
      * Constructor der Netzwerk Klasse
