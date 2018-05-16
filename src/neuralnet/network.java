@@ -98,7 +98,7 @@ public class network {
     void homeTrainer(imgLoader imgs, int cycles) throws IOException {
         double[] exp = new double[10];
         int lab;
-        int right = 0, wrong = 0;
+        int right = 0, wrong = 0, ist;
         double fehler;
         for (int i = 0; i < cycles; i++) {
             lab = imgs.readLabel();
@@ -110,12 +110,13 @@ public class network {
             for (int j = 0; j < this.lays[this.lays.length - 1].net.length; j++) {
                 fehler += Math.pow(exp[j] - this.lays[this.lays.length - 1].net[j].value, 2);
             }
-            if (lab == (this.lays[this.lays.length - 1].getBiggest()).id) {
-                System.out.println(i + " - -----CORRECT-----\t\t F:" + fehler);
+            ist = (this.lays[this.lays.length - 1].getBiggest()).id;
+            if (lab == ist) {
+                System.out.println(i + " - -----CORRECT-----\t\t F:" + fehler + "S:" + lab + "/I:" + ist);
                 right++;
             } else {
                 wrong++;
-                System.out.println(i + " - " + (double) right / (double) wrong + " \t F:" + fehler);
+                System.out.println(i + " - " + (double) right / (double) wrong + " \t F:" + fehler + "S:" + lab + "/I:" + ist);
             }
         }
         System.out.println("Verhältnis:" + (double) right / (double) wrong);
@@ -146,7 +147,6 @@ public class network {
         DataInputStream inp = new DataInputStream(new FileInputStream(dat));
         System.out.println("Read Config from File...");
         System.out.println("Magic Number: " + inp.readInt());
-        double inpd;
         int i = 0;
         boolean fail = false;
         int inpi = inp.readInt();
